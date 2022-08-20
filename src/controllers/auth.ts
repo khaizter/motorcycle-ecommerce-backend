@@ -50,13 +50,9 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(201).json({
       message: "User created.",
-      data: {
-        token: token,
-        userName: userResult.name,
-        userId: userResult._id,
-        user: userResult,
-        cart: cartResult,
-      },
+      token: token,
+      userName: userResult.name,
+      userId: userResult._id,
     });
   } catch (err) {
     next(err);
@@ -91,11 +87,9 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(202).json({
       message: "Login success.",
-      data: {
-        token: token,
-        userName: existingUser!.name,
-        userId: existingUser!._id,
-      },
+      token: token,
+      userName: existingUser!.name,
+      userId: existingUser!._id,
     });
   } catch (err) {
     next(err);
