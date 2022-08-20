@@ -1,9 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 
+import jwt from "jsonwebtoken";
+
 import User from "../models/user";
 import Cart from "../models/cart";
 
 import throwError from "../utils/throwError";
+
+const accessTokenKey = "supersecret";
+const refreshTokenKey = "supersupersecret";
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, name } = req.body;
@@ -32,9 +37,23 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 
     const cartResult = await cart.save();
 
+    // generate jwt
+    const token = jwt.sign(
+      {
+        userId: userResult!._id,
+      },
+      accessTokenKey,
+      {
+        expiresIn: "2h",
+      }
+    );
+
     return res.status(201).json({
       message: "User created.",
       data: {
+        token: token,
+        userName: userResult.name,
+        userId: userResult._id,
         user: userResult,
         cart: cartResult,
       },
@@ -59,10 +78,23 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
       throwError("Invalid password.", 401);
     }
 
+    // generate jwt
+    const token = jwt.sign(
+      {
+        userId: existingUser!._id,
+      },
+      accessTokenKey,
+      {
+        expiresIn: "2h",
+      }
+    );
+
     res.status(202).json({
       message: "Login success.",
       data: {
-        user: existingUser,
+        token: token,
+        userName: existingUser!.name,
+        userId: existingUser!._id,
       },
     });
   } catch (err) {
