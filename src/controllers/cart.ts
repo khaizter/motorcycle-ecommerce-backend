@@ -39,8 +39,6 @@ const updateCart = async (req: any, res: Response, next: NextFunction) => {
       };
     });
 
-    console.log({ transformedItems });
-
     cart.items = transformedItems;
 
     const cartResult = await cart.save();

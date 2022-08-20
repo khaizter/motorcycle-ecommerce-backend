@@ -3,8 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import throwError from "../utils/throwError";
 
-const accessTokenKey = "supersecret";
-const refreshTokenKey = "supersupersecret";
+const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
+const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
 
 const isAuth = async (req: any, res: Response, next: NextFunction) => {
   const authHeader = req.get("Authorization");

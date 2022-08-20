@@ -5,7 +5,7 @@ import express, {
   Request,
   Response,
 } from "express";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 dotenv.config();

@@ -7,8 +7,8 @@ import Cart from "../models/cart";
 
 import throwError from "../utils/throwError";
 
-const accessTokenKey = "supersecret";
-const refreshTokenKey = "supersupersecret";
+const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
+const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, name } = req.body;
