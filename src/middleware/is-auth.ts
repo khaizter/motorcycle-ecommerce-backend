@@ -14,11 +14,8 @@ const isAuth = async (req: any, res: Response, next: NextFunction) => {
     }
     const token = authHeader!.split(" ")[1] as string;
 
-    console.log("this is my token", token);
-
     // verify and decode token
     const decodedToken: any = await jwt.verify(token, accessTokenKey);
-    console.log("2", decodedToken);
 
     if (!decodedToken) {
       throwError("Not authenticated.", 401);
@@ -30,7 +27,6 @@ const isAuth = async (req: any, res: Response, next: NextFunction) => {
     };
     return next();
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };

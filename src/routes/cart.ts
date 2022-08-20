@@ -9,4 +9,7 @@ const router: Router = Router();
 // get cart
 router.get("/", isAuth, cartControllers.getCart);
 
+// put cart
+router.put("/", isAuth, cartControllers.updateCart);
+
 export default router;
