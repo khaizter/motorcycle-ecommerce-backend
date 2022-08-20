@@ -13,6 +13,7 @@ dotenv.config();
 // Routes
 import cartRoutes from "./routes/cart";
 import authRoutes from "./routes/auth";
+import productRoutes from "./routes/product";
 
 const app: Application = express();
 
@@ -34,6 +35,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use("/cart", cartRoutes);
 app.use("/auth", authRoutes);
+app.use("/product", productRoutes);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   let { statusCode, message, data } = error;
