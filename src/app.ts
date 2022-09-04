@@ -21,34 +21,25 @@ const app: Application = express();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images");
+    cb(null, path.join(__dirname, "images"));
   },
   filename: (req, file, cb) => {
-    cb(null, uuid.v4() + "-" + file.originalname);
+    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
   },
 });
 
-const fileFilter = (
-  req: Request,
-  file: Express.Multer.File,
-  cb: multer.FileFilterCallback
-) => {
+const fileFilter = (req: Request, file: any, cb: any) => {
   if (
     file.mimetype === "image/png" ||
     file.mimetype === "image/jpg" ||
     file.mimetype === "image/jpeg"
   ) {
+    console.log("file filter 1");
     cb(null, true);
   } else {
     cb(null, false);
   }
 };
-
-app.use(bodyParser.json());
-app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
-);
-app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", process.env.CORS_WHITELIST || "*");
@@ -63,6 +54,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
+app.use(bodyParser.json());
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/cart", cartRoutes);
 app.use("/auth", authRoutes);

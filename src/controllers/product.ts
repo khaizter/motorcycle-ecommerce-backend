@@ -16,14 +16,19 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
 
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
-    console.log("post product");
-    const { image, name, description, price } = req.body;
+    let imageUrl;
+    if (!req.file) {
+      // throwError("No Image", 400);
+      imageUrl = "no-image.png";
+    }
+    imageUrl = req.file.path.replace("\\", "/");
+    const { name, description, price } = req.body;
 
     const product = new Product({
-      image,
       name,
       description,
-      price,
+      price: price,
+      image: imageUrl,
     });
 
     const productResult = await product.save();
