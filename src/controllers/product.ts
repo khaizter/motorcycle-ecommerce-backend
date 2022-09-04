@@ -21,7 +21,8 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
       // throwError("No Image", 400);
       imageUrl = "no-image.png";
     }
-    imageUrl = req.file.path.replace("\\", "/");
+    console.log(req.file);
+    imageUrl = `images/${req.file.filename}`;
     const { name, description, price } = req.body;
 
     const product = new Product({
