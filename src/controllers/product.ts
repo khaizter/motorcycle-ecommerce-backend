@@ -16,6 +16,7 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
 
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
+    console.log("post product");
     const { image, name, description, price } = req.body;
 
     const product = new Product({

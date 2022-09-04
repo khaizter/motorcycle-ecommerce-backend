@@ -96,4 +96,25 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { postSignup, postLogin };
+const checkToken = async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.get("Authorization");
+  try {
+    if (!authHeader) {
+      throwError("Not authenticated.", 401);
+    }
+    const token = authHeader!.split(" ")[1] as string;
+
+    // verify and decode token
+    const decodedToken: any = await jwt.verify(token, accessTokenKey);
+    if (!decodedToken) {
+      throwError("Not authenticated.", 401);
+    }
+    res.status(200).json({
+      message: "Verified token",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default { postSignup, postLogin, checkToken };

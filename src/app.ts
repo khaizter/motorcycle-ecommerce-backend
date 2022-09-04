@@ -7,6 +7,7 @@ import express, {
 } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+const path = require("path");
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,9 +19,10 @@ import productRoutes from "./routes/product";
 const app: Application = express();
 
 app.use(bodyParser.json());
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", process.env.CORS_WHITELIST || "*");
   res.header(
     "Access-Control-Allow-Methods",
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"

@@ -10,7 +10,7 @@ router.post("/signup", authControllers.postSignup);
 // login
 router.post("/login", authControllers.postLogin);
 
-// refresh token
-router.post("/refresh-token");
+// check token
+router.get("/check-token", authControllers.checkToken);
 
 export default router;

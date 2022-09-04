@@ -16,7 +16,6 @@ const isAuth = async (req: any, res: Response, next: NextFunction) => {
 
     // verify and decode token
     const decodedToken: any = await jwt.verify(token, accessTokenKey);
-
     if (!decodedToken) {
       throwError("Not authenticated.", 401);
     }
