@@ -8,7 +8,7 @@ import express, {
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import multer from "multer";
-import uuid from "uuid";
+import { v4 } from "uuid";
 const path = require("path");
 import dotenv from "dotenv";
 dotenv.config();
@@ -24,7 +24,7 @@ const fileStorage = multer.diskStorage({
     cb(null, path.join(__dirname, "images"));
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+    cb(null, v4() + file.originalname);
   },
 });
 
