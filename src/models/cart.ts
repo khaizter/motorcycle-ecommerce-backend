@@ -9,7 +9,7 @@ const cartSchema = new Schema({
         ref: "Product",
         required: true,
       },
-      thumbnail: { type: String, required: true },
+      imageKey: { type: String, required: true },
       name: { type: String, required: true },
       quantity: { type: Number, required: true },
       price: { type: Number, required: true },
