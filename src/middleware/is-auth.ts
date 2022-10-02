@@ -23,6 +23,7 @@ const isAuth = async (req: any, res: Response, next: NextFunction) => {
     req.user = {
       name: decodedToken.name,
       _id: decodedToken.userId,
+      type: decodedToken.type,
     };
     return next();
   } catch (err) {

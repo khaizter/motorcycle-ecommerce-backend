@@ -10,6 +10,6 @@ const router: Router = Router();
 router.get("/", productControllers.getProducts);
 
 // post product - add product
-router.post("/", productControllers.postProduct);
+router.post("/", isAuth, productControllers.postProduct);
 
 export default router;

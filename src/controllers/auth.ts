@@ -25,6 +25,7 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       name: name,
       email: email,
       password: password,
+      type: "customer",
     });
 
     const userResult = await user.save();
@@ -41,6 +42,8 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign(
       {
         userId: userResult!._id,
+        name: userResult.name,
+        type: userResult.type,
       },
       accessTokenKey,
       {
@@ -53,6 +56,7 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       token: token,
       userName: userResult.name,
       userId: userResult._id,
+      type: existingUser?.type,
     });
   } catch (err) {
     next(err);
@@ -78,6 +82,8 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign(
       {
         userId: existingUser!._id,
+        name: existingUser!.name,
+        type: existingUser!.type,
       },
       accessTokenKey,
       {
@@ -88,8 +94,9 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
     res.status(202).json({
       message: "Login success.",
       token: token,
-      userName: existingUser!.name,
-      userId: existingUser!._id,
+      userName: existingUser?.name,
+      userId: existingUser?._id,
+      type: existingUser?.type,
     });
   } catch (err) {
     next(err);

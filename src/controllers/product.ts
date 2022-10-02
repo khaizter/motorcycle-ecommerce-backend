@@ -41,6 +41,7 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
 
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   const { name, description, price } = req.body;
+  console.log(req.user);
   const image = req.file;
   const imageUniqueName = v4() + "-" + image.originalname;
   const params = {
@@ -64,32 +65,6 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
   const productResult = await product.save();
 
   res.status(200).json({ message: "add product", product: productResult });
-  // try {
-  //   let imageUrl;
-  //   if (!req.file) {
-  //     // throwError("No Image", 400);
-  //     imageUrl = "no-image.png";
-  //   }
-  //   console.log(req.file);
-  //   imageUrl = `images/${req.file.filename}`;
-  //   const { name, description, price } = req.body;
-
-  //   const product = new Product({
-  //     name,
-  //     description,
-  //     price: price,
-  //     image: imageUrl,
-  //   });
-
-  //   const productResult = await product.save();
-
-  //   res.status(200).json({
-  //     message: "post product",
-  //     product: productResult,
-  //   });
-  // } catch (err) {
-  //   next(err);
-  // }
 };
 
 export default { getProducts, postProduct };
