@@ -46,7 +46,7 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { name, description, price } = req.body;
-    const { type } = req.user.type;
+    const { type } = req.user;
     if (type !== "admin") {
       throwError("Not authorized.", 401);
     }
