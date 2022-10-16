@@ -46,14 +46,31 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
 const getProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { productId } = req.params;
-    console.log(productId);
     const product = await Product.findById(productId);
     if (!product) {
       throwError("Could not find Product ID.", 404);
+      return;
     }
+
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: product.imageKey,
+    };
+
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const mappedProduct = {
+      id: product._id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      imageKey: product.imageKey,
+      imageUrl: url,
+    };
+
     res.status(200).json({
       message: "hello",
-      product: product,
+      product: mappedProduct,
     });
   } catch (err) {
     return next(err);
