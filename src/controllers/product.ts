@@ -43,6 +43,23 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
+const getProduct = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { productId } = req.params;
+    console.log(productId);
+    const product = await Product.findById(productId);
+    if (!product) {
+      throwError("Could not find Product ID.", 404);
+    }
+    res.status(200).json({
+      message: "hello",
+      product: product,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { name, description, price } = req.body;
@@ -78,4 +95,4 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export default { getProducts, postProduct };
+export default { getProducts, getProduct, postProduct };
