@@ -11,7 +11,9 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
     if (type !== "admin") {
       throwError("Not authorized.", 401);
     }
+
     const orders = await Order.find();
+
     return res.status(200).json({
       message: "get order list",
       orders: orders,
@@ -25,7 +27,9 @@ const getOrders = async (req: any, res: Response, next: NextFunction) => {
   try {
     const userId = req.user._id;
     const userObjectId = new mongoose.Types.ObjectId(userId);
+
     const orders = await Order.find({ owner: userObjectId });
+
     return res.status(200).json({
       message: "get order customer",
       orders: orders,
@@ -39,8 +43,11 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
   try {
     const userId = req.user._id;
     const userObjectId = new mongoose.Types.ObjectId(userId);
+
     const { items, deliveryAddress, purchasedDate } = req.body;
+
     const orderStatus = "active";
+
     const order = new Order({
       items: items,
       owner: userObjectId,
