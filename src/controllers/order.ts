@@ -44,7 +44,9 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
     const userId = req.user._id;
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    const { items, deliveryAddress, purchasedDate } = req.body;
+    const { items, deliveryAddress } = req.body;
+
+    const purchasedDate = new Date().toLocaleString();
 
     const orderStatus = "active";
 

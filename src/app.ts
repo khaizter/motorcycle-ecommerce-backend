@@ -18,6 +18,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import cartRoutes from "./routes/cart";
 import authRoutes from "./routes/auth";
 import productRoutes from "./routes/product";
+import orderRoutes from "./routes/order";
 
 const corsWhiteList = process.env.CORS_WHITELIST;
 const mongoDBURI = process.env.MONGO_DB_URI;
@@ -73,6 +74,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/cart", cartRoutes);
 app.use("/auth", authRoutes);
 app.use("/product", productRoutes);
+app.use("/order", orderRoutes);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   let { statusCode, message, data } = error;
