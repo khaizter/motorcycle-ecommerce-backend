@@ -15,4 +15,6 @@ router.get("/:productId", productControllers.getProduct);
 // post product - add product
 router.post("/", isAuth, productControllers.postProduct);
 
+// delete product
+router.delete("/:productId", isAuth, productControllers.deleteProduct);
 export default router;

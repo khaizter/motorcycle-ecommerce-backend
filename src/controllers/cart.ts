@@ -17,7 +17,16 @@ const getCart = async (req: any, res: Response, next: NextFunction) => {
     const cart = await Cart.findOne({ owner: userObjectId });
 
     if (!cart) {
-      throwError("Cart not found", 400);
+      // create a new cart instead
+      const cart = new Cart({
+        items: [],
+        owner: userObjectId,
+      });
+      const cartResult = await cart.save();
+      return res.status(200).json({
+        message: "new cart created",
+        cart: cartResult,
+      });
     }
 
     const mappedItems = await Promise.all(

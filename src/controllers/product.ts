@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import Product from "../models/product";
 import throwError from "../utils/throwError";
 import s3 from "../services/s3-bucket";
+import Cart from "../models/cart";
 
 const bucketName = process.env.BUCKET_NAME;
 
@@ -69,7 +70,7 @@ const getProduct = async (req: any, res: Response, next: NextFunction) => {
     };
 
     res.status(200).json({
-      message: "hello",
+      message: "get product",
       product: mappedProduct,
     });
   } catch (err) {
@@ -112,4 +113,35 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export default { getProducts, getProduct, postProduct };
+const deleteProduct = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { productId } = req.params;
+    console.log(productId);
+
+    // admin check
+    const { type } = req.user;
+    if (type !== "admin") {
+      throwError("Not authorized.", 401);
+    }
+
+    // remove from product table
+    const product = await Product.findByIdAndDelete(productId);
+
+    // remove from cart of all users cart
+    const carts = await Cart.find();
+    carts.forEach((cart) => {
+      cart.items = cart.items.filter((item: any) => {
+        return item.productId.toString() !== productId;
+      });
+      cart.save();
+    });
+
+    res.status(200).json({
+      message: "product deleted",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default { getProducts, getProduct, postProduct, deleteProduct };
