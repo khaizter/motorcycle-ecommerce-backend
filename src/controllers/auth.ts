@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 import User from "../models/user";
 import Cart from "../models/cart";
-
+import mongoose from "mongoose";
 import throwError from "../utils/throwError";
 
 const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
@@ -127,4 +127,21 @@ const checkToken = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { postSignup, postLogin, checkToken };
+const getUser = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    // const userId = new mongoose.Types.ObjectId(req.user.userId);
+    const { _id: userId } = req.user;
+    const user = await User.findById(userId);
+    if (!user) {
+      throwError("Invalid token.", 404);
+    }
+    return res.status(200).json({
+      message: "get user",
+      user: user,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default { postSignup, postLogin, checkToken, getUser };
