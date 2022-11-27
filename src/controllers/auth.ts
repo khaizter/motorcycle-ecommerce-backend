@@ -11,7 +11,7 @@ const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
 const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, homeAddress, contactNumber } = req.body;
 
   try {
     // Check for existing user
@@ -26,6 +26,9 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       email: email,
       password: password,
       type: "customer",
+      homeAddress,
+      deliveryAddress: homeAddress,
+      contactNumber,
     });
 
     const userResult = await user.save();
