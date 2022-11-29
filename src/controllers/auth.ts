@@ -129,19 +129,134 @@ const checkToken = async (req: Request, res: Response, next: NextFunction) => {
 
 const getUser = async (req: any, res: Response, next: NextFunction) => {
   try {
-    // const userId = new mongoose.Types.ObjectId(req.user.userId);
     const { _id: userId } = req.user;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Invalid token.", 404);
+      throwError("Invalid token.", 401);
     }
+
+    const userResult = {
+      contactNumber: user?.contactNumber,
+      deliveryAddress: user?.deliveryAddress,
+      homeAddress: user?.homeAddress,
+      email: user?.homeAddress,
+      name: user?.name,
+      type: user?.type,
+      _id: user?._id,
+    };
+
     return res.status(200).json({
       message: "get user",
-      user: user,
+      user: userResult,
     });
   } catch (err) {
     return next(err);
   }
 };
 
-export default { postSignup, postLogin, checkToken, getUser };
+const updatePassword = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req?.user?._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      throwError("Unauthenticated.", 404);
+    }
+    // check old password if valid
+    if (oldPassword !== user?.password) {
+      throwError("Wrong Old Password.", 406);
+    }
+
+    user!.password = newPassword;
+    const userResult = await user?.save();
+
+    return res.status(200).json({
+      message: "update password",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const updateContactNumber = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { newContactNumber } = req.body;
+    const userId = req?.user?._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      throwError("Unauthenticated.", 404);
+    }
+
+    user!.contactNumber = newContactNumber;
+    const userResult = await user?.save();
+
+    return res.status(200).json({
+      message: "update contact number",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const updateHomeAddress = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { newHomeAddress } = req.body;
+    const userId = req?.user?._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      throwError("Unauthenticated.", 404);
+    }
+
+    user!.homeAddress = newHomeAddress;
+    const userResult = await user?.save();
+
+    return res.status(200).json({
+      message: "update home address",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const updateDeliveryAddress = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { newDeliveryAddress } = req.body;
+    const userId = req?.user?._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      throwError("Unauthenticated.", 404);
+    }
+
+    user!.deliveryAddress = newDeliveryAddress;
+    const userResult = await user?.save();
+
+    return res.status(200).json({
+      message: "update delivery address",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default {
+  postSignup,
+  postLogin,
+  checkToken,
+  getUser,
+  updatePassword,
+  updateContactNumber,
+  updateHomeAddress,
+  updateDeliveryAddress,
+};

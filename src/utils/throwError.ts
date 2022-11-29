@@ -1,4 +1,8 @@
-const throwError = (errorMessage: string, statusCode: number, data?: any) => {
+const throwError = (
+  errorMessage: string,
+  statusCode: number,
+  data?: any
+): never => {
   const error: any = new Error(errorMessage);
   error.statusCode = statusCode;
   error.data = data;

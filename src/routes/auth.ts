@@ -1,4 +1,4 @@
-import { Router, NextFunction, Request, Response } from "express";
+import { Router } from "express";
 
 import authControllers from "../controllers/auth";
 
@@ -17,5 +17,21 @@ router.get("/check-token", authControllers.checkToken);
 
 // get user
 router.get("/user", isAuth, authControllers.getUser);
+
+// change password
+router.put("/user/password", isAuth, authControllers.updatePassword);
+
+// change contact number
+router.put("/user/contact-number", isAuth, authControllers.updateContactNumber);
+
+// change home address
+router.put("/user/home-address", isAuth, authControllers.updateHomeAddress);
+
+// change delivery address
+router.put(
+  "/user/delivery-address",
+  isAuth,
+  authControllers.updateDeliveryAddress
+);
 
 export default router;
