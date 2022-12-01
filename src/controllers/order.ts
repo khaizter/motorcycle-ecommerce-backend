@@ -123,4 +123,86 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export default { getOrderList, getOrders, postOrder };
+const cancelOrder = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user._id;
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const { orderId } = req.body;
+    const order = await Order.findById(orderId);
+
+    // check if order exist
+    if (!order) {
+      return throwError("Order not found", 404);
+    }
+
+    // check if order recipient is user
+    if (order.owner?.toString !== userObjectId.toString) {
+      return throwError("Unauthorized", 401);
+    }
+
+    order.status = "canceled";
+    const orderResult = await order.save();
+    res.status(200).json({
+      message: "Order Canceled",
+      orderId: order._id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const completeOrder = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { type } = req.user;
+    const { orderId } = req.body;
+    if (type !== "admin") {
+      throwError("Not authorized.", 401);
+    }
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return throwError("Order not found", 404);
+    }
+
+    order.status = "completed";
+    const orderResult = await order.save();
+
+    res.status(200).json({
+      message: "Order Completed",
+      orderId: order._id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const deleteOrder = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { type } = req.user;
+    const { orderId } = req.body;
+    if (type !== "admin") {
+      throwError("Not authorized.", 401);
+    }
+    const order = await Order.findByIdAndDelete(orderId);
+
+    if (!order) {
+      return throwError("Order not found", 404);
+    }
+
+    res.status(200).json({
+      message: "Order Deleted",
+      order: order,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default {
+  getOrderList,
+  getOrders,
+  postOrder,
+  cancelOrder,
+  completeOrder,
+  deleteOrder,
+};

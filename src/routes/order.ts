@@ -15,4 +15,13 @@ router.get("/", isAuth, orderControllers.getOrders);
 // turn cart into order
 router.post("/", isAuth, orderControllers.postOrder);
 
+// cancel order
+router.put("/cancel-order", isAuth, orderControllers.cancelOrder);
+
+// complete order
+router.put("/complete-order", isAuth, orderControllers.completeOrder);
+
+// delete order
+router.put("/delete-order", isAuth, orderControllers.deleteOrder);
+
 export default router;
