@@ -139,7 +139,7 @@ const getUser = async (req: any, res: Response, next: NextFunction) => {
       contactNumber: user?.contactNumber,
       deliveryAddress: user?.deliveryAddress,
       homeAddress: user?.homeAddress,
-      email: user?.homeAddress,
+      email: user?.email,
       name: user?.name,
       type: user?.type,
       _id: user?._id,
