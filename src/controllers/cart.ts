@@ -24,7 +24,7 @@ const getCart = async (req: any, res: Response, next: NextFunction) => {
       });
       const cartResult = await cart.save();
       return res.status(200).json({
-        message: "new cart created",
+        message: "New cart created",
         cart: cartResult,
       });
     }
@@ -55,7 +55,7 @@ const getCart = async (req: any, res: Response, next: NextFunction) => {
     };
     return res
       .status(200)
-      .json({ message: "here's the cart", cart: transformedCart });
+      .json({ message: "Getting cart successful", cart: transformedCart });
   } catch (err) {
     console.log(err);
     next(err);
@@ -86,9 +86,8 @@ const updateCart = async (req: any, res: Response, next: NextFunction) => {
 
     return res
       .status(200)
-      .json({ message: "update cart", updatedCart: cartResult });
+      .json({ message: "Cart updated", updatedCart: cartResult });
   } catch (err) {
-    console.log("update cart", err);
     return next(err);
   }
 };

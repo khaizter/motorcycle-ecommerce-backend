@@ -36,7 +36,7 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
     );
 
     res.status(200).json({
-      message: "get products",
+      message: "Getting products successful",
       products: mappedProducts,
     });
   } catch (err) {
@@ -49,7 +49,7 @@ const getProduct = async (req: any, res: Response, next: NextFunction) => {
     const { productId } = req.params;
     const product = await Product.findById(productId);
     if (!product) {
-      throwError("Could not find Product ID.", 404);
+      throwError("Could not find Product ID", 404);
       return;
     }
 
@@ -70,7 +70,7 @@ const getProduct = async (req: any, res: Response, next: NextFunction) => {
     };
 
     res.status(200).json({
-      message: "get product",
+      message: "Getting product details successful",
       product: mappedProduct,
     });
   } catch (err) {
@@ -83,7 +83,7 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
     const { name, description, price } = req.body;
     const { type } = req.user;
     if (type !== "admin") {
-      throwError("Not authorized.", 401);
+      throwError("Unauthorized", 401);
     }
     const image = req.file;
     const imageUniqueName = v4() + "-" + image.originalname;
@@ -107,7 +107,7 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
 
     const productResult = await product.save();
 
-    res.status(200).json({ message: "add product", product: productResult });
+    res.status(200).json({ message: "Product added", product: productResult });
   } catch (err) {
     return next(err);
   }
@@ -121,7 +121,7 @@ const deleteProduct = async (req: any, res: Response, next: NextFunction) => {
     // admin check
     const { type } = req.user;
     if (type !== "admin") {
-      throwError("Not authorized.", 401);
+      throwError("Unauthorized", 401);
     }
 
     // remove from product table
@@ -137,7 +137,7 @@ const deleteProduct = async (req: any, res: Response, next: NextFunction) => {
     });
 
     res.status(200).json({
-      message: "product deleted",
+      message: "Product deleted",
     });
   } catch (err) {
     return next(err);

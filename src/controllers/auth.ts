@@ -11,13 +11,12 @@ const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
 const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password, name, homeAddress, contactNumber } = req.body;
-
   try {
+    const { email, password, name, homeAddress, contactNumber } = req.body;
     // Check for existing user
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
-      throwError("Email already exist.", 409);
+      throwError("Email already exist", 409);
     }
 
     // Create user
@@ -50,12 +49,12 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       },
       accessTokenKey,
       {
-        expiresIn: "2h",
+        expiresIn: "4h",
       }
     );
 
     return res.status(201).json({
-      message: "User created.",
+      message: "Account created",
       token: token,
       userName: userResult.name,
       userId: userResult._id,
@@ -67,18 +66,17 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const postLogin = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
     // Check for existing user
     const existingUser = await User.findOne({ email: email });
     if (!existingUser) {
-      throwError("User with email doesn't exist.", 404);
+      throwError("User with email doesn't exist", 404);
     }
 
     // Check password
     if (existingUser!.password !== password) {
-      throwError("Invalid password.", 401);
+      throwError("Invalid password", 401);
     }
 
     // generate jwt
@@ -90,12 +88,12 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
       },
       accessTokenKey,
       {
-        expiresIn: "2h",
+        expiresIn: "4h",
       }
     );
 
     res.status(202).json({
-      message: "Login success.",
+      message: "Login success",
       token: token,
       userName: existingUser?.name,
       userId: existingUser?._id,
@@ -107,17 +105,17 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const checkToken = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.get("Authorization");
   try {
+    const authHeader = req.get("Authorization");
     if (!authHeader) {
-      throwError("Not authenticated.", 401);
+      throwError("Not authenticated", 401);
     }
     const token = authHeader!.split(" ")[1] as string;
 
     // verify and decode token
     const decodedToken: any = await jwt.verify(token, accessTokenKey);
     if (!decodedToken) {
-      throwError("Not authenticated.", 401);
+      throwError("Not authenticated", 401);
     }
     res.status(200).json({
       message: "Verified token",
@@ -132,7 +130,7 @@ const getUser = async (req: any, res: Response, next: NextFunction) => {
     const { _id: userId } = req.user;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Invalid token.", 401);
+      throwError("Invalid token", 401);
     }
 
     const userResult = {
@@ -146,7 +144,7 @@ const getUser = async (req: any, res: Response, next: NextFunction) => {
     };
 
     return res.status(200).json({
-      message: "get user",
+      message: "Getting user details successful",
       user: userResult,
     });
   } catch (err) {
@@ -160,18 +158,18 @@ const updatePassword = async (req: any, res: Response, next: NextFunction) => {
     const userId = req?.user?._id;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Unauthenticated.", 404);
+      throwError("Unauthenticated", 404);
     }
     // check old password if valid
     if (oldPassword !== user?.password) {
-      throwError("Wrong Old Password.", 406);
+      throwError("Wrong old password", 406);
     }
 
     user!.password = newPassword;
     const userResult = await user?.save();
 
     return res.status(200).json({
-      message: "update password",
+      message: "Password updated",
     });
   } catch (err) {
     return next(err);
@@ -188,14 +186,14 @@ const updateContactNumber = async (
     const userId = req?.user?._id;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Unauthenticated.", 404);
+      throwError("Unauthenticated", 404);
     }
 
     user!.contactNumber = newContactNumber;
     const userResult = await user?.save();
 
     return res.status(200).json({
-      message: "update contact number",
+      message: "Contact number updated",
     });
   } catch (err) {
     return next(err);
@@ -212,14 +210,14 @@ const updateHomeAddress = async (
     const userId = req?.user?._id;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Unauthenticated.", 404);
+      throwError("Unauthenticated", 404);
     }
 
     user!.homeAddress = newHomeAddress;
     const userResult = await user?.save();
 
     return res.status(200).json({
-      message: "update home address",
+      message: "Home address updated",
     });
   } catch (err) {
     return next(err);
@@ -236,14 +234,14 @@ const updateDeliveryAddress = async (
     const userId = req?.user?._id;
     const user = await User.findById(userId);
     if (!user) {
-      throwError("Unauthenticated.", 404);
+      throwError("Unauthenticated", 404);
     }
 
     user!.deliveryAddress = newDeliveryAddress;
     const userResult = await user?.save();
 
     return res.status(200).json({
-      message: "update delivery address",
+      message: "Delivery address updated",
     });
   } catch (err) {
     return next(err);

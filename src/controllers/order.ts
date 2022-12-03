@@ -15,7 +15,7 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { type } = req.user;
     if (type !== "admin") {
-      throwError("Not authorized.", 401);
+      throwError("Unauthorized", 401);
     }
 
     const ordersDoc = await Order.find();
@@ -59,7 +59,7 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
     );
 
     return res.status(200).json({
-      message: "get order list",
+      message: "Getting orders successful",
       orders: mappedOrders,
     });
   } catch (err) {
@@ -112,7 +112,7 @@ const getOrders = async (req: any, res: Response, next: NextFunction) => {
     );
 
     return res.status(200).json({
-      message: "get order customer",
+      message: "Getting orders successful",
       orders: mappedOrders,
     });
   } catch (err) {
@@ -142,7 +142,7 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
     const orderResult = order.save();
 
     return res.status(200).json({
-      message: "order created",
+      message: "Order created",
       order: orderResult,
     });
   } catch (err) {
@@ -170,7 +170,7 @@ const cancelOrder = async (req: any, res: Response, next: NextFunction) => {
     order.status = "canceled";
     const orderResult = await order.save();
     res.status(200).json({
-      message: "Order Canceled",
+      message: "Order canceled",
       orderId: order._id,
     });
   } catch (err) {
@@ -183,7 +183,7 @@ const completeOrder = async (req: any, res: Response, next: NextFunction) => {
     const { type } = req.user;
     const { orderId } = req.body;
     if (type !== "admin") {
-      throwError("Not authorized.", 401);
+      throwError("Unauthorized", 401);
     }
     const order = await Order.findById(orderId);
 
@@ -195,7 +195,7 @@ const completeOrder = async (req: any, res: Response, next: NextFunction) => {
     const orderResult = await order.save();
 
     res.status(200).json({
-      message: "Order Completed",
+      message: "Order completed",
       orderId: order._id,
     });
   } catch (err) {
@@ -208,7 +208,7 @@ const deleteOrder = async (req: any, res: Response, next: NextFunction) => {
     const { type } = req.user;
     const { orderId } = req.body;
     if (type !== "admin") {
-      throwError("Not authorized.", 401);
+      throwError("Unauthorized", 401);
     }
     const order = await Order.findByIdAndDelete(orderId);
 
@@ -217,7 +217,7 @@ const deleteOrder = async (req: any, res: Response, next: NextFunction) => {
     }
 
     res.status(200).json({
-      message: "Order Deleted",
+      message: "Order deleted",
       order: order,
     });
   } catch (err) {
