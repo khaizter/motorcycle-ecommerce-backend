@@ -5,6 +5,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose from "mongoose";
 
 import Order from "../models/order";
+import User from "../models/user";
 import throwError from "../utils/throwError";
 
 import s3 from "../services/s3-bucket";
@@ -22,6 +23,7 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
     const orders = ordersDoc.map((order) => order.toObject());
     const mappedOrders = await Promise.all(
       orders.map(async (order) => {
+        const mappedOwner = await User.findById(order.owner);
         const mappedItems = await Promise.all(
           order.items.map(async (item) => {
             const getObjectParams = {
@@ -40,7 +42,19 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
             };
           })
         );
-        return await { ...order, items: mappedItems };
+        return await {
+          ...order,
+          owner: {
+            contactNumber: mappedOwner?.contactNumber,
+            deliveryAddress: mappedOwner?.deliveryAddress,
+            homeAddress: mappedOwner?.homeAddress,
+            email: mappedOwner?.email,
+            name: mappedOwner?.name,
+            type: mappedOwner?.type,
+            _id: mappedOwner?._id,
+          },
+          items: mappedItems,
+        };
       })
     );
 
@@ -62,6 +76,7 @@ const getOrders = async (req: any, res: Response, next: NextFunction) => {
     const orders = ordersDoc.map((order) => order.toObject());
     const mappedOrders = await Promise.all(
       orders.map(async (order) => {
+        const mappedOwner = await User.findById(order.owner);
         const mappedItems = await Promise.all(
           order.items.map(async (item) => {
             const getObjectParams = {
@@ -80,7 +95,19 @@ const getOrders = async (req: any, res: Response, next: NextFunction) => {
             };
           })
         );
-        return await { ...order, items: mappedItems };
+        return await {
+          ...order,
+          owner: {
+            contactNumber: mappedOwner?.contactNumber,
+            deliveryAddress: mappedOwner?.deliveryAddress,
+            homeAddress: mappedOwner?.homeAddress,
+            email: mappedOwner?.email,
+            name: mappedOwner?.name,
+            type: mappedOwner?.type,
+            _id: mappedOwner?._id,
+          },
+          items: mappedItems,
+        };
       })
     );
 
