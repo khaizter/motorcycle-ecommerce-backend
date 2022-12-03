@@ -93,7 +93,7 @@ const postLogin = async (req: Request, res: Response, next: NextFunction) => {
     );
 
     res.status(202).json({
-      message: "Login success",
+      message: "Login successful",
       token: token,
       userName: existingUser?.name,
       userId: existingUser?._id,
