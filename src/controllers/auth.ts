@@ -58,7 +58,7 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       token: token,
       userName: userResult.name,
       userId: userResult._id,
-      type: existingUser?.type,
+      type: userResult?.type,
     });
   } catch (err) {
     next(err);
