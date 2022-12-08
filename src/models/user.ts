@@ -9,6 +9,8 @@ const userSchema = new Schema({
   homeAddress: { type: String, required: true },
   deliveryAddress: { type: String, required: false },
   contactNumber: { type: String, required: true },
+  recoveryQuestion: { type: String, required: true },
+  recoveryAnswer: { type: String, required: true },
 });
 
 export default mongoose.model("User", userSchema);

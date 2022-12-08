@@ -12,7 +12,16 @@ const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password, name, homeAddress, contactNumber } = req.body;
+    const {
+      email,
+      password,
+      name,
+      homeAddress,
+      contactNumber,
+      recoveryQuestion,
+      recoveryAnswer,
+    } = req.body;
+
     // Check for existing user
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
@@ -28,6 +37,8 @@ const postSignup = async (req: Request, res: Response, next: NextFunction) => {
       homeAddress,
       deliveryAddress: homeAddress,
       contactNumber,
+      recoveryQuestion,
+      recoveryAnswer,
     });
 
     const userResult = await user.save();
