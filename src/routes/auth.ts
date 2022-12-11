@@ -41,6 +41,6 @@ router.post("/user/email", authControllers.checkEmail);
 router.post("/user/recovery", authControllers.checkRecovery);
 
 // reset password
-router.post("/user/reset-password", authControllers.resetPassword);
+router.put("/user/reset-password", authControllers.resetPassword);
 
 export default router;
