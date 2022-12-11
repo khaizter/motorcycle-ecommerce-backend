@@ -34,4 +34,13 @@ router.put(
   authControllers.updateDeliveryAddress
 );
 
+// check email
+router.post("/user/email", authControllers.checkEmail);
+
+// check recovery
+router.post("/user/recovery", authControllers.checkRecovery);
+
+// reset password
+router.post("/user/reset-password", authControllers.resetPassword);
+
 export default router;

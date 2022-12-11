@@ -9,6 +9,7 @@ import throwError from "../utils/throwError";
 
 const accessTokenKey = process.env.ACCESS_TOKEN_KEY as string;
 const refreshTokenKey = process.env.REFRESH_TOKEN_KEY as string;
+const resetTokenKey = process.env.RESET_TOKEN_KEY as string;
 
 const postSignup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -259,6 +260,83 @@ const updateDeliveryAddress = async (
   }
 };
 
+const checkEmail = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return throwError("User with email doesn't exist", 404);
+    }
+
+    return res.status(200).json({
+      message: "User account found",
+      userId: user._id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const checkRecovery = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { userId, recoveryQuestion, recoveryAnswer } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return throwError("User not found", 404);
+    }
+
+    if (
+      recoveryQuestion !== user?.recoveryQuestion ||
+      recoveryAnswer !== user?.recoveryAnswer
+    ) {
+      return throwError("Recovery information doesn't match", 400);
+    }
+
+    // generate jwt reset token
+    const token = jwt.sign(
+      {
+        userId: user!._id,
+      },
+      resetTokenKey,
+      {
+        expiresIn: "4h",
+      }
+    );
+
+    return res.status(200).json({
+      message: "Recovery information match",
+      token: token,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const resetPassword = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { token, newPassword } = req.body;
+    const decodedToken: any = await jwt.verify(token, resetTokenKey);
+    if (!decodedToken) {
+      throwError("Token expired", 401);
+    }
+    const { userId } = decodedToken;
+    const user = await User.findById(userId);
+    if (!user) {
+      return throwError("User not found", 404);
+    }
+
+    user.password = newPassword;
+    const userResult = user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   postSignup,
   postLogin,
@@ -268,4 +346,7 @@ export default {
   updateContactNumber,
   updateHomeAddress,
   updateDeliveryAddress,
+  checkEmail,
+  checkRecovery,
+  resetPassword,
 };

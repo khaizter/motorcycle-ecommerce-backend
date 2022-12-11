@@ -10,14 +10,14 @@ const isAuth = async (req: any, res: Response, next: NextFunction) => {
   const authHeader = req.get("Authorization");
   try {
     if (!authHeader) {
-      throwError("Not authenticated.", 401);
+      throwError("Not authenticated", 401);
     }
     const token = authHeader!.split(" ")[1] as string;
 
     // verify and decode token
     const decodedToken: any = await jwt.verify(token, accessTokenKey);
     if (!decodedToken) {
-      throwError("Not authenticated.", 401);
+      throwError("Not authenticated", 401);
     }
     // hook this information to our request object
     req.user = {
