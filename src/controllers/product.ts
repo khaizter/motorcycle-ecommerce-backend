@@ -29,6 +29,7 @@ const getProducts = async (req: any, res: Response, next: NextFunction) => {
           name: product.name,
           description: product.description,
           price: product.price,
+          availableStocks: product.availableStocks,
           imageKey: product.imageKey,
           imageUrl: url,
         };
@@ -65,6 +66,7 @@ const getProduct = async (req: any, res: Response, next: NextFunction) => {
       name: product.name,
       description: product.description,
       price: product.price,
+      availableStocks: product.availableStocks,
       imageKey: product.imageKey,
       imageUrl: url,
     };
