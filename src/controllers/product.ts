@@ -80,7 +80,7 @@ const getProduct = async (req: any, res: Response, next: NextFunction) => {
 
 const postProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const { name, description, price } = req.body;
+    const { name, description, price, availableStocks } = req.body;
     const { type } = req.user;
     if (type !== "admin") {
       throwError("Unauthorized", 401);
@@ -102,6 +102,7 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
       name,
       description,
       price,
+      availableStocks,
       imageKey: imageUniqueName,
     });
 
