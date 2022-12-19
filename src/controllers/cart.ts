@@ -67,26 +67,21 @@ const updateCart = async (req: any, res: Response, next: NextFunction) => {
     const { items } = req.body;
     const userId = req.user._id;
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    const cart = await Cart.findOne({ owner: userObjectId });
-
-    if (!cart) {
-      return throwError("Cart not found", 400);
-    }
-
     const transformedItems = items.map((item: any) => {
       return {
         ...item,
         productId: new mongoose.Types.ObjectId(item.productId),
       };
     });
+    const cart = await Cart.findOneAndUpdate(
+      { owner: userObjectId },
+      { items: transformedItems }
+    );
 
-    cart.items = transformedItems;
-
-    const cartResult = await cart.save();
-
-    return res
-      .status(200)
-      .json({ message: "Cart updated", updatedCart: cartResult });
+    if (!cart) {
+      return throwError("Cart not found", 400);
+    }
+    return res.status(200).json({ message: "Cart updated", updatedCart: cart });
   } catch (err) {
     return next(err);
   }
