@@ -5,10 +5,12 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose from "mongoose";
 
 import Order from "../models/order";
+import Product from "../models/product";
 import User from "../models/user";
 import throwError from "../utils/throwError";
 
 import s3 from "../services/s3-bucket";
+import asyncEvery from "../utils/asyncEvery";
 const bucketName = process.env.BUCKET_NAME;
 
 const getOrderList = async (req: any, res: Response, next: NextFunction) => {
@@ -126,6 +128,30 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
     const { items, deliveryAddress } = req.body;
+
+    // check if all items are available
+    const isItemsAvailable = await asyncEvery(items, async (item) => {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return throwError("Product not found", 404);
+      }
+      return item.quantity <= product.availableStocks;
+    });
+    if (!isItemsAvailable) {
+      return throwError(
+        "Some of the items in your cart are not available in stocks.",
+        400
+      );
+    }
+    // minus items quantity to available stocks
+    await items.forEach(async (item: any) => {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return throwError("Product not found", 404);
+      }
+      product.availableStocks -= item.quantity;
+      const productResult = await product.save();
+    });
 
     const purchasedDate = new Date().toLocaleString();
 
