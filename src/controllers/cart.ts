@@ -5,6 +5,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose from "mongoose";
 
 import Cart from "../models/cart";
+import Product from "../models/product";
 import throwError from "../utils/throwError";
 import s3 from "../services/s3-bucket";
 
@@ -37,6 +38,10 @@ const getCart = async (req: any, res: Response, next: NextFunction) => {
         };
         const command = new GetObjectCommand(getObjectParams);
         const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        const product = await Product.findById(item.productId);
+        if (!product) {
+          return throwError("Product not found", 404);
+        }
         return {
           productId: item.productId,
           imageKey: item.imageKey,
@@ -44,6 +49,7 @@ const getCart = async (req: any, res: Response, next: NextFunction) => {
           name: item.name,
           quantity: item.quantity,
           price: item.price,
+          availableStocks: product.availableStocks,
         };
       })
     );
