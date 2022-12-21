@@ -11,6 +11,7 @@ import throwError from "../utils/throwError";
 
 import s3 from "../services/s3-bucket";
 import asyncEvery from "../utils/asyncEvery";
+import addHours from "../utils/addHours";
 const bucketName = process.env.BUCKET_NAME;
 
 const getOrderList = async (req: any, res: Response, next: NextFunction) => {
@@ -153,7 +154,8 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
       const productResult = await product.save();
     });
 
-    const purchasedDate = new Date().toLocaleString();
+    const purchasedDate = new Date();
+    const adjustedDate = addHours(purchasedDate, 8).toLocaleString();
 
     const orderStatus = "active";
 
@@ -161,7 +163,7 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
       items: items,
       owner: userObjectId,
       deliveryAddress: deliveryAddress,
-      purchasedDate: purchasedDate,
+      purchasedDate: adjustedDate,
       status: orderStatus,
     });
 
