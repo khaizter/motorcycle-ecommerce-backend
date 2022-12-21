@@ -24,4 +24,7 @@ router.put("/complete-order", isAuth, orderControllers.completeOrder);
 // delete order
 router.put("/delete-order", isAuth, orderControllers.deleteOrder);
 
+// delete order
+router.put("/expire-order", isAuth, orderControllers.expireOrder);
+
 export default router;

@@ -22,12 +22,12 @@ const getOrderList = async (req: any, res: Response, next: NextFunction) => {
 
     const ordersDoc = await Order.find();
 
-    const orders = ordersDoc.map((order) => order.toObject());
+    const orders: any = ordersDoc.map((order) => order.toObject());
     const mappedOrders = await Promise.all(
-      orders.map(async (order) => {
+      orders.map(async (order: any) => {
         const mappedOwner = await User.findById(order.owner);
         const mappedItems = await Promise.all(
-          order.items.map(async (item) => {
+          order.items.map(async (item: any) => {
             const getObjectParams = {
               Bucket: bucketName,
               Key: item.imageKey as string,
@@ -193,6 +193,17 @@ const cancelOrder = async (req: any, res: Response, next: NextFunction) => {
       return throwError("Unauthorized", 401);
     }
 
+    // plus items quantity to available stocks
+    await order.items.forEach(async (item: any) => {
+      const product = await Product.findById(item.productId);
+      if (product) {
+        product.availableStocks += item.quantity;
+        const productResult = await product.save();
+      } else {
+        // product was deleted already
+      }
+    });
+
     order.status = "canceled";
     const orderResult = await order.save();
     res.status(200).json({
@@ -251,6 +262,42 @@ const deleteOrder = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
+const expireOrder = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { type } = req.user;
+    const { orderId } = req.body;
+    if (type !== "admin") {
+      throwError("Unauthorized", 401);
+    }
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return throwError("Order not found", 404);
+    }
+
+    // plus items quantity to available stocks
+    await order.items.forEach(async (item: any) => {
+      const product = await Product.findById(item.productId);
+      if (product) {
+        product.availableStocks += item.quantity;
+        const productResult = await product.save();
+      } else {
+        // product was deleted already
+      }
+    });
+
+    order.status = "expired";
+    const orderResult = await order.save();
+
+    res.status(200).json({
+      message: "Order expired",
+      orderId: order._id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   getOrderList,
   getOrders,
@@ -258,4 +305,5 @@ export default {
   cancelOrder,
   completeOrder,
   deleteOrder,
+  expireOrder,
 };
