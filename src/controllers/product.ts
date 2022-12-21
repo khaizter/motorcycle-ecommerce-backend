@@ -119,7 +119,6 @@ const postProduct = async (req: any, res: Response, next: NextFunction) => {
 const deleteProduct = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { productId } = req.params;
-    console.log(productId);
 
     // admin check
     const { type } = req.user;
@@ -147,4 +146,42 @@ const deleteProduct = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export default { getProducts, getProduct, postProduct, deleteProduct };
+const updateProductStocks = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { productId } = req.params;
+    const { updatedStocks } = req.body;
+
+    // admin check
+    const { type } = req.user;
+    if (type !== "admin") {
+      throwError("Unauthorized", 401);
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return throwError("Product not found", 404);
+    }
+
+    product.availableStocks = updatedStocks;
+    const productResult = product.save();
+
+    res.status(200).json({
+      message: "Stocks updated",
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export default {
+  getProducts,
+  getProduct,
+  postProduct,
+  deleteProduct,
+  updateProductStocks,
+};
