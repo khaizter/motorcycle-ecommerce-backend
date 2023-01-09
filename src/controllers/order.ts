@@ -13,7 +13,7 @@ import s3 from "../services/s3-bucket";
 import asyncEvery from "../utils/asyncEvery";
 import addHours from "../utils/addHours";
 const bucketName = process.env.BUCKET_NAME;
-
+const GMT_ADD = process.env.GMT_ADD;
 const getOrderList = async (req: any, res: Response, next: NextFunction) => {
   try {
     const { type } = req.user;
@@ -155,7 +155,10 @@ const postOrder = async (req: any, res: Response, next: NextFunction) => {
     });
 
     const purchasedDate = new Date();
-    const adjustedDate = addHours(purchasedDate, 8).toLocaleString();
+    const adjustedDate = addHours(
+      purchasedDate,
+      parseInt(GMT_ADD || "0")
+    ).toLocaleString();
 
     const orderStatus = "active";
 
