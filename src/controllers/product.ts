@@ -178,10 +178,52 @@ const updateProductStocks = async (
   }
 };
 
+const updateProduct = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const { productId } = req.params;
+    const { name, description, price, availableStocks } = req.body;
+    const { type } = req.user;
+    if (type !== "admin") {
+      throwError("Unauthorized", 401);
+    }
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return throwError("Product not found", 404);
+    }
+
+    const image = req.file;
+    const imageUniqueName = v4() + "-" + image.originalname;
+    const params = {
+      Bucket: bucketName,
+      Key: imageUniqueName,
+      Body: image.buffer,
+      ContentType: image.mimetype,
+    };
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+
+    product.name = name;
+    product.description = description;
+    product.price = price;
+    product.availableStocks = availableStocks;
+    product.imageKey = imageUniqueName;
+
+    const productResult = await product.save();
+
+    res
+      .status(200)
+      .json({ message: "Product updated", product: productResult });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   getProducts,
   getProduct,
   postProduct,
   deleteProduct,
   updateProductStocks,
+  updateProduct,
 };

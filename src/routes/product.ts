@@ -18,6 +18,14 @@ router.post("/", isAuth, productControllers.postProduct);
 // delete product
 router.delete("/:productId", isAuth, productControllers.deleteProduct);
 
-// delete product
-router.put("/:productId", isAuth, productControllers.updateProductStocks);
+// update product stocks
+router.put(
+  "/stocks/:productId",
+  isAuth,
+  productControllers.updateProductStocks
+);
+
+// update product
+router.put("/:productId", isAuth, productControllers.updateProduct);
+
 export default router;
